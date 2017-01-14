@@ -25,11 +25,10 @@ with open('step1.html', 'r') as f:
 ## Step2
 # parse html page 
 from bs4 import BeautifulSoup as bs
-
 soup = bs(html)
 
 # # save them into a txt
-# import codecs
+import codecs
 with codecs.open('step2.txt', 'w', encoding = 'utf-8') as f:
     f.write('IMDB_ID\tRank\tTitle\n')
     for i in soup.find_all('h3')[0:100]:
@@ -44,13 +43,13 @@ with codecs.open('step2.txt', 'w', encoding = 'utf-8') as f:
 import pandas
 import time # to sleep
 
-d = pandas.read_table('step2.txt', sep = '\t')
-with codecs.open('step3.txt', 'w', encoding = 'utf-8') as f:
-    for i in d.IMDB_ID:
-        url = 'http://omdbapi.com/?i=' + i
-        json_str = urllib2.urlopen(url).read()
-        f.write(json_str + '\n')
-        time.sleep(3) 
+# d = pandas.read_table('step2.txt', sep = '\t')
+# with codecs.open('step3.txt', 'w', encoding = 'utf-8') as f:
+#     for i in d.IMDB_ID:
+#         url = 'http://omdbapi.com/?i=' + i
+#         json_str = urllib2.urlopen(url).read()
+#         f.write(json_str + '\n')
+#         time.sleep(3) 
 
 
 ## Step 4
