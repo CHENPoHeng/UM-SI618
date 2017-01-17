@@ -54,16 +54,18 @@ import time # to sleep
 
 ## Step 4
 import json
+import collections
 
 with open('step3.txt', 'r') as f:
     json_str = f.read()
-# imdbMeta = '['
+
 imdbMeta = []
 for i in json_str.split('\n')[:-1]:
     tmp = json.loads(i)
     # imdbMeta = imdbMeta +'{\'Title\':' + tmp['Title'] + ', \'Actors\':' + tmp['Actors'].split(', ')[:5] + ',}'
     # print imdbMeta
-    imdbMeta.append({'Title': tmp['Title'], 'Actors': tmp['Actors'].split(', ')[:5]})
+    
+    imdbMeta.append(collections.OrderedDict([('Title', tmp['Title']), ('Actors', tmp['Actors'].split(', ')[:5])]))
 # imdbMeta = imdbMeta + ']'
 
 with open('step4.json', 'w') as f:
