@@ -1,5 +1,5 @@
 # Project Proposal                                
-### Chen, Po-Heng (pohechen)
+###### Chen, Po-Heng (pohechen)
 ### Summary and Motivation
 As a person dreaming of traveling around the world, living like a local rather than looking around like a tourist when visiting an exotic place is always what I put into practice. Airbnb is a convenient platform where traveler can find a stay in local home. However, most of the time, travelers don't know if the locations they are heading to stay are safe or not. I plan to analyze the relationship between crime types/amount and Airbnb listing data of rating/number of reviews/price to provide a big picture of appropriate location for travelers to stay.
 
