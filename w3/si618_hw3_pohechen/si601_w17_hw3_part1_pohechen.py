@@ -60,7 +60,7 @@ c.execute('''SELECT movie_genre.genre, count(*) as movie
     FROM movie_genre JOIN movies ON (movie_genre.imdb_id == movies.imdb_id)
     GROUP BY movie_genre.genre ORDER BY movie DESC LIMIT 10''')
 tmp = c.fetchall()
-print 'Genre, Movies'
+print '\nGenre, Movies'
 for i, j in tmp:
     print i + ', ' + str(j)
 
@@ -68,7 +68,7 @@ for i, j in tmp:
 c.execute('''SELECT year, count(*) as movie
     FROM movies GROUP BY year ORDER BY year ''')
 tmp = c.fetchall()
-print 'Year, Movies'
+print '\nYear, Movies'
 for i, j in tmp:
     print str(i) + ', ' + str(j)
 
@@ -80,7 +80,7 @@ c.execute('''SELECT movies.title, movies.year, movies.rating
     WHERE movie_genre.genre == 'Sci-Fi'
     ORDER BY movies.rating DESC, movies.year DESC''')
 tmp = c.fetchall()
-print 'Title, Year, Rating'
+print '\nTitle, Year, Rating'
 for x, y, z in tmp:
     print x + ', ' + str(y) + ', ' + str(z)
 
@@ -93,7 +93,7 @@ c.execute('''SELECT movie_actor.actors, count(*) as movies
     GROUP BY movie_actor.actors
     ORDER BY movies DESC LIMIT 10''')
 tmp = c.fetchall()
-print 'Actor, Movies'
+print '\nActor, Movies'
 for i, j in tmp:
     print i + ', ' + str(j)
 
@@ -114,7 +114,7 @@ c.execute('''SELECT *
 ## dont know why cannot put WHERE in the same line
 ## how do I know the name of new column names of new datatable??
 tmp = c.fetchall()
-print 'Actor A, Actor B, Co-stared Movies'
+print '\nActor A, Actor B, Co-stared Movies'
 for x,y,z in tmp:
     print x + ', ' + y + ', ' + str(z)
 
