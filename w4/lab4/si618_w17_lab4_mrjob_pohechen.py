@@ -19,7 +19,7 @@ class BigramCount(MRJob):
         for i in xrange(len(words) - 1):
             bigram = words[i] + ' ' + words[i + 1]
             counts = 1
-            yield (bigram, counts)
+            yield (bigram.lower(), counts)
  
     def combiner(self, bigram, counts):
         yield (bigram, sum(counts))
