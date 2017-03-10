@@ -1,7 +1,7 @@
 library(data.table)
 library(dplyr)
 library(ggplot2) # learn ggplot2 T_T
-options(digits=22)
+options(digits=5)
 len = length
 ## load in data 
 # read in crime data
@@ -9,6 +9,8 @@ c = read.csv('bostonCrime.csv')
 ac = read.csv('airbnbCalendar.csv', as.is = T) # airbnb calendar
 ac$price = as.numeric(gsub('\\$|\\,', '', ac$price))
 ac = as.data.table(ac)
+ac = unique(ac)
+
 al = read.csv('airbnbListings.csv', as.is = T) # airbnb listing
 
 # rename 
@@ -27,7 +29,6 @@ i = which(names(al) %in% c('listing_url', 'scrape_id', 'last_scraped', 'experien
           'state'))
 if(len(i)) al = al[, -i]
 al = data.table(al)
-ac = unique(ac)
 
 ## take a look of crime data
 ## time
@@ -121,3 +122,20 @@ ac = ac %>% group_by(listing_id) %>%
     summarize(p.mean = mean(price), p.med = median(price), p.max = max(price),
               p.min = min(price), p.q25 = quantile(price, .25),
               p.q75 = quantile(price, .75), p.sd = sd(price))
+
+# combine the price
+al$p.mean = ac[match(al$id, ac$listing_id),]$p.mean
+# see price hist
+pricedis = ggplot(al, aes(x=(p.mean))) +
+    geom_histogram(aes(y = ..density..,fill = ..count..), bins = 30) + 
+    geom_density() + 
+    scale_x_log10() +
+    labs(x = "Average Price") +
+    ggtitle('Airbnb Boston Area Price Distribution') + 
+    theme(plot.title = element_text(hjust = 0.5,face="bold"))
+ggsave('PriceDistribution.png')
+
+# use price to create color
+i = which(al$host_is_superhost == 't')
+al[i, ]$host_is_superhost = 'o'
+al[-i, ]$host_is_superhost = 'x'
