@@ -1,0 +1,107 @@
+---
+title: "SI 618 Homework 7"
+author: "CHEN,Po-Heng (pohechen)"
+date: "March 9, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(data.table)
+```
+
+## Loading and Cleaning Data (5 points)
+```{r}
+d = read.csv('businessdata.tsv', sep = '\t') 
+# I used read.csv to read because it's more robust than read.table
+# and when using read.table, it creates error
+d = na.omit(d)
+summary(d)
+d = data.table(d)
+```
+
+## Histograms of Star Ratings (10 points)
+```{r}
+ggplot(d, aes(x = stars, fill = state)) +
+    geom_histogram(binwidth = 1, alpha = 0.8) +
+    facet_grid(. ~ state)
+```
+
+```{r}
+ggplot(d, aes(x = stars, fill = state)) +
+    geom_histogram(aes(y=..density..), binwidth = 1, alpha = 0.8) +
+    facet_grid(. ~ state)
+```
+
+## Histograms of Review Counts (10 points)
+```{r}
+ggplot(d, aes(x = review_count)) +
+    geom_histogram(binwidth = 10, alpha = 0.8) +
+    ggtitle('Histograms of Review Counts') +
+    labs(x = 'Review Counts')
+```
+
+```{r}
+p = d[d$review_count <= 200, ]
+ggplot(p, aes(x = review_count)) +
+    geom_histogram(binwidth = 1, alpha = 0.8) +
+    ggtitle('Histograms of Review Counts') +
+    labs(x = 'Review Counts')
+```
+
+## Boxplot of Star Ratings by States (10 points)
+```{r}
+ggplot(d, aes(x = state, y = stars, col = state, fill = state)) +
+    geom_boxplot(alpha = 0.6) +
+    ggtitle('Star Ratings by States') +
+    labs(x = '')
+```
+
+## Jittered Plot of Star Ratings by States (10 points)
+```{r}
+ggplot(d, aes(x = state, y = stars, col = state, fill = state)) +
+    geom_jitter(alpha = 0.6) +
+    ggtitle('Star Ratings by States') +
+    labs(x = '')
+```
+
+## Bar Chart of Number of Businesses by State (10 points)
+```{r}
+ggplot(d, aes(x = reorder(state, state, function(x)-length(x)))) +
+    geom_bar() +
+    labs(x = 'State')
+```
+
+## Jittered Scatterplot of Stars and Review Counts (10 points
+```{r}
+ggplot(d, aes(x = stars, y = review_count, col = state, fill = state)) +
+    geom_jitter(alpha = 0.6) +
+    labs(y = 'Review Count')
+
+```
+
+
+## Slice and Dice Data using data.table syntax (or plyr)
+
+#### Subsetting Data (10 points)
+```{r}
+tmp = d[, rank:= rank(-stars, ties.method = 'first'), by = .(city, main_category)]
+print(tmp)
+```
+
+```{r}
+tmp = tmp[rank %in% 1:5 & main_category == 'Chinese', .(city, name, rank, stars) ]
+tmp = tmp[order(city, rank),]
+print(tmp)
+```
+
+## Summarize Data (10 points)
+```{r}
+tmp = d[, .(m_review = round(mean(review_count))) ,by = .(state)]
+tmp = transform(tmp, state = reorder(state, -m_review)) ## magic trick
+ggplot(tmp, aes(x = state, y = m_review)) +
+    geom_bar(stat = "identity")
+```
+
+
