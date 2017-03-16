@@ -1,0 +1,71 @@
+---
+title: "SI618 HW8 Report"
+author: "CHEN,Po-Heng (pohechen)"
+date: "March 16, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(DBI)
+library(dplyr)
+library(data.table)
+library(RSQLite)
+library(ggplot2)
+```
+
+## Getting Data from SQLite Database (10 points)
+
+```{r}
+dbdriver = dbDriver('SQLite')
+connect = dbConnect(dbdriver, dbname = 'vehicles.db')
+d = dbGetQuery(connect, 'select * from Cars')
+d = data.table(d)
+d$index = NULL
+head(d, 10)
+summary(d)
+```
+
+## Converting to Factors (10 points)
+
+```{r}
+# fastest way to convert multiple factors
+convert_cols = c('make', 'VClass', 'cylinders', 'trany')
+d[, (convert_cols) := lapply(.SD, factor), .SDcols = convert_cols]
+summary(d)
+```
+
+
+## Filter Down Data (10 points)
+
+```{r}
+i = names(which(table(d$VClass) >= 40))
+d = d[VClass %in% i, ]
+d
+summary(d)
+```
+
+
+## Fuel Economy of Vehicles of Different Makes (40 points)
+```{r fig.width=16}
+d = d %>% group_by(VClass, make, year) %>% summarise(MPG = mean(comb08))
+
+for (c in levels(d$VClass)) {
+    p = d[d$VClass == c,]
+    if(!nrow(p)) next
+    g = ggplot(p, aes(x = year, y = MPG, col = make)) +
+        geom_line() +
+        ggtitle(c) + 
+        labs(x = 'Year', y = 'Mean combined MPG') 
+    print(g)
+    p = p %>% group_by(make) %>% summarize(MPG = mean(MPG))
+    g = ggplot(p, aes(x = reorder(make, -MPG), y = MPG)) +
+        geom_bar(alpha = 0.6, stat = 'identity') +
+        ggtitle(c) + 
+        labs(x = 'Make', y = 'Mean combined MPG in ALL Years') + 
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    print(g)
+}
+    
+```
+
