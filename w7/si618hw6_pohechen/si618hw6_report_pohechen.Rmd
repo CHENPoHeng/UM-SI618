@@ -1,0 +1,53 @@
+---
+title: "si618w17hw6_pohechen"
+author: "CHEN,Po-Heng (pohechen)"
+date: "February 16, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+##### Q1
+```{r}
+d = read.table('countrydata_withregion.tsv', sep = '\t', header=TRUE, quote = "")
+head(d, 15)
+```
+
+##### Q2
+```{r}
+ggplot(d, aes(x = area, y = population)) + 
+    geom_point() + 
+    scale_x_log10() + scale_y_log10()
+```
+
+##### Q3
+```{r}
+area = aggregate(area ~ region, d, sum)
+population = aggregate(as.numeric(population) ~ region, d, sum)
+names(population) = c('region', 'population')
+# pie(area$area, labels = area$region) # use basic r plot
+ggplot(area, aes(x="", y=area, fill=region)) +
+    geom_bar(width = 1, stat = "identity") +
+    coord_polar("y", start=0) + 
+    scale_fill_brewer(palette="Blues") 
+ggplot(population, aes(x="", y=population, fill=region)) +
+    geom_bar(width = 1, stat = "identity") +
+    coord_polar("y", start=0) + 
+    scale_fill_brewer(palette="Blues") 
+```
+
+##### Q4 average pop_per_km by
+```{r}
+df = data.frame(d, pop_per_km = d$population / d$area)
+df = aggregate(pop_per_km ~ region,df, mean)
+df = df[with(df, order(pop_per_km)),]
+ggplot(df, aes(x=reorder(region, pop_per_km), y=pop_per_km)) +
+    geom_bar(stat="identity", width = 0.8) +
+    scale_x_discrete(name ="Region") + 
+    scale_y_continuous(name ="Population Density") +
+    coord_flip()
+```
+
