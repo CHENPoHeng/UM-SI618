@@ -1,0 +1,65 @@
+---
+title: "SI618-lab10"
+author: "CHEN,Po-Heng (pohechen)"
+date: "March 30, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+len = length
+```
+
+## Part 1. Data preparation
+```{r}
+d = read.csv('Pokemon.csv')
+i = which(names(d) %in% c('HP', 'Attack', 'Defense', 'Sp..Atk', 'Sp..Def', 'Speed'))
+if(len(i)) d = scale(d[, i])
+d = data.frame(d)
+print(head(d, 5))
+
+```
+
+## Part 2. Identify the right number of clusters
+```{r}
+res = list()
+for(i in 1:15){
+    k = kmeans(d, centers = i)
+    res[[i]] = c(i, k$tot.withinss)
+}
+res = do.call(rbind, res)
+plot(res, type = 'b', 
+     xlab = 'Number of Clusters', ylab = 'Within groups sum of squares')
+```
+
+## Part 3. Plot the clusters
+#### a. Defense vs Speed (3 clusters)
+```{r}
+k = kmeans(d, centers = 3)
+plot(d$Defense, d$Speed, col = k$cluster,
+     main = 'k-means clustering of Pokemon with 3 clusters',
+     xlab = 'Defense', ylab = 'Speed')
+```
+
+#### a. Defense vs Attack (3 clusters)
+```{r}
+plot(d$Defense, d$Attack, col = k$cluster,
+     main = 'k-means clustering of Pokemon with 2 clusters',
+     xlab = 'Defense', ylab = 'Attack')
+```
+
+#### b. Defense vs Speed (2 clusters)
+```{r}
+k = kmeans(d, centers = 2)
+plot(d$Defense, d$Speed, col = k$cluster,
+     main = 'k-means clustering of Pokemon with 2 clusters',
+     xlab = 'Defense', ylab = 'Speed')
+```
+
+#### b. Defense vs Attack (2 clusters)
+```{r}
+plot(d$Defense, d$Attack, col = k$cluster,
+     main = 'k-means clustering of Pokemon with 2 clusters',
+     xlab = 'Defense', ylab = 'Attack')
+```
+
